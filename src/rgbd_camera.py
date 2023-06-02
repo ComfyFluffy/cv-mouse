@@ -87,13 +87,6 @@ class RgbdCamera:
 
         self.session.connect(dev)
 
-    # def get_intrinsic_mat_from_coeffs(self, coeffs):
-    #     return np.array([
-    #         [coeffs.fx, 0, coeffs.tx],  # 3x3 intrinsic matrix
-    #         [0, coeffs.fy, coeffs.ty],
-    #         [0, 0, 1]
-    #     ])
-
     def get_current_frame(self) -> Frame:
         with self.lock:
             frame = self.frame.clone()
