@@ -1,7 +1,9 @@
 class MouseController:
     last_update_time = 0
-    last_x = 0
-    last_y = 0
+    last_coordinates: tuple[float, float]
+
+    left_button_pressed = False
+    right_button_pressed = False
 
     def update_position(self, x: float, y: float):
         '''

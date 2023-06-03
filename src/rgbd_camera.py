@@ -3,6 +3,7 @@ from record3d import Record3DStream
 from threading import Event, Lock
 import cv2
 from enum import Enum
+from typing import Any
 
 
 class DeviceType(Enum):
@@ -24,11 +25,8 @@ class Frame:
         self.device_type = device_type
 
     def clone(self):
-        new_frame = Frame()
-        new_frame.rgb = self.rgb.copy()
-        new_frame.depth = self.depth.copy()
-        new_frame.instrinsic_mat = self.instrinsic_mat.copy()
-        new_frame.device_type = self.device_type
+        new_frame = Frame(self.rgb.copy(), self.depth.copy(),
+                          self.instrinsic_mat.copy(), self.device_type)
         return new_frame
 
 
@@ -37,8 +35,8 @@ class RgbdCamera:
     def __init__(self):
         self.event = Event()
         self.lock = Lock()
-        self.session = None
-        self.frame = None
+        self.session: Any
+        self.frame: Frame
         self.stopped = False
 
     def _on_new_frame(self):
@@ -50,12 +48,7 @@ class RgbdCamera:
             depth = cv2.flip(depth, 1)
             rgb = cv2.flip(rgb, 1)
 
-        rgb = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
-
-        frame = Frame(
-            rgb, depth,
-            self.get_intrinsic_mat_from_coeffs(
-                self.session.get_intrinsic_mat()), device_type)
+        frame = Frame(rgb, depth, np.array([]), device_type)
 
         with self.lock:
             self.frame = frame
