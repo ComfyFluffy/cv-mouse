@@ -26,9 +26,7 @@ class Plane:
 
         # Use RANSAC to fit a plane to the points
         ransac = RANSACRegressor()
-        print('Fitting plane...')
         ransac.fit(points[:, :2], points[:, 2])
-        print('Plane fitted.')
 
         return Plane(ransac)
 

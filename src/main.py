@@ -13,19 +13,17 @@ def fit_plane_task(depth):
 
 def process_frame(hand_detector: HandDetector, frame: Frame,
                   executor: ThreadPoolExecutor):
-    print('Processing frame...')
     depth = frame.depth
 
     rgb = frame.rgb
     bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
 
-    print('detecting hand...')
+    plane_fut = executor.submit(fit_plane_task, depth)
+
     hand = hand_detector.detect_bgr(bgr)
+    plane = plane_fut.result()
 
     if hand:
-        print('Hand detected.')
-        plane = Plane.fit(depth)
-        print('Plane fitted.')
         matrix = plane.transform_matrix
 
         # Convert the hand coordinate to the plane coordinate system.
@@ -41,7 +39,6 @@ def process_frame(hand_detector: HandDetector, frame: Frame,
         depth[int(x * depth.shape[0]):int(x * depth.shape[0]) + 10,
               int(y * depth.shape[1]):int(y * depth.shape[1]) + 10] = 0
 
-    print('Showing frame...')
     cv2.imshow('Color', bgr)
     cv2.imshow('Depth', depth)
     cv2.waitKey(1)
@@ -53,7 +50,8 @@ if __name__ == '__main__':
     hand_detector = HandDetector()
 
     # Create a ThreadPoolExecutor.
-    while True:
-        rgbd_camera.wait_for_new_frame(3)
-        print('New frame received.')
-        process_frame(hand_detector, rgbd_camera.get_current_frame(), None)
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        while True:
+            rgbd_camera.wait_for_new_frame(3)
+            process_frame(hand_detector, rgbd_camera.get_current_frame(),
+                          executor)
