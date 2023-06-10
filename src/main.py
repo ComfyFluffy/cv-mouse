@@ -1,7 +1,6 @@
 from rgbd_camera import RgbdCamera
 from hand_detector import HandDetector
 from hand_processer import HandProcesser
-import cv2
 
 if __name__ == '__main__':
     rgbd_camera = RgbdCamera()
@@ -13,6 +12,7 @@ if __name__ == '__main__':
     while True:
         rgbd_camera.wait_for_new_frame(3)
         frame = rgbd_camera.get_current_frame()
+        # print(frame.camera_pose)
         hand_processer.process_frame(
             hand_detector,
             frame,

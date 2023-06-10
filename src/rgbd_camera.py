@@ -13,20 +13,24 @@ class DeviceType(Enum):
 
 class Frame:
     rgb: np.ndarray
-    depth: np.ndarray 
+    depth: np.ndarray
     instrinsic_mat: np.ndarray
     device_type: DeviceType
+    camera_pose: Any
 
     def __init__(self, rgb: np.ndarray, depth: np.ndarray,
-                 intrinsic_mat: np.ndarray, device_type: DeviceType):
+                 intrinsic_mat: np.ndarray, device_type: DeviceType,
+                 camera_pose: Any):
         self.rgb = rgb
         self.depth = depth
         self.instrinsic_mat = intrinsic_mat
         self.device_type = device_type
+        self.camera_pose = camera_pose
 
     def clone(self):
         new_frame = Frame(self.rgb.copy(), self.depth.copy(),
-                          self.instrinsic_mat.copy(), self.device_type)
+                          self.instrinsic_mat.copy(), self.device_type,
+                          self.camera_pose)
         return new_frame
 
 
@@ -43,12 +47,13 @@ class RgbdCamera:
         depth = self.session.get_depth_frame()
         rgb = self.session.get_rgb_frame()
         device_type = DeviceType(self.session.get_device_type())
+        camera_pose = self.session.get_camera_pose()
 
         if device_type == DeviceType.TRUEDEPTH:
             depth = cv2.flip(depth, 1)
             rgb = cv2.flip(rgb, 1)
 
-        frame = Frame(rgb, depth, np.array([]), device_type)
+        frame = Frame(rgb, depth, np.array([]), device_type, camera_pose)
 
         with self.lock:
             self.frame = frame

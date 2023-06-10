@@ -26,23 +26,18 @@ class Hand:
 
     @property
     def index_dip(self) -> tuple[float, float]:
-        '''
-        Get the coordinate of the index dip.
-        '''
         return self.get_coordinate(mp_hands.HandLandmark.INDEX_FINGER_DIP)
 
     @property
     def middle_dip(self) -> tuple[float, float]:
-        '''
-        Get the coordinate of the middle dip.
-        '''
         return self.get_coordinate(mp_hands.HandLandmark.MIDDLE_FINGER_DIP)
 
     @property
+    def thumb_ip(self) -> tuple[float, float]:
+        return self.get_coordinate(mp_hands.HandLandmark.THUMB_IP)
+
+    @property
     def ring_dip(self) -> tuple[float, float]:
-        '''
-        Get the coordinate of the ring dip.
-        '''
         return self.get_coordinate(mp_hands.HandLandmark.RING_FINGER_DIP)
 
 

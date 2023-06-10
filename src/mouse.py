@@ -70,12 +70,14 @@ class MouseController:
 
         # Compute the speed
         speed = math.sqrt(dx * dx + dy * dy) / dt
-        if speed > 5:
+        if speed > 10:
             print(f'Speed: {speed}, ignoring.')
+            return 0, 0
+        if speed < 0.15:
             return 0, 0
 
         # Compute acceleration as a function of speed.
-        acceleration = speed * 5000
+        acceleration = speed * 12000
 
         # Apply acceleration to movement
         pixel_dx = int(dx * acceleration)
