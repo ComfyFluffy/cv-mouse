@@ -1,6 +1,17 @@
 import math
 import time
-from pyautogui import mouseDown, mouseUp, moveRel
+from pyautogui import moveRel
+import pyautogui
+
+pyautogui.FAILSAFE = False
+
+
+def mouseDown(button='left'):
+    print(f'Mouse down {button}')
+
+
+def mouseUp(button='left'):
+    print(f'Mouse up {button}')
 
 
 class MouseController:
@@ -44,7 +55,7 @@ class MouseController:
         # Compute the pixel movement
         mouse_x, mouse_y = self.compute_with_acceleration(dx, dy, dt)
 
-        moveRel(mouse_x, mouse_y)
+        moveRel(mouse_x, mouse_y, _pause=False)
 
     def compute_with_acceleration(self, dx: float, dy: float,
                                   dt: float) -> tuple[int, int]:
@@ -59,11 +70,12 @@ class MouseController:
 
         # Compute the speed
         speed = math.sqrt(dx * dx + dy * dy) / dt
+        if speed > 5:
+            print(f'Speed: {speed}, ignoring.')
+            return 0, 0
 
-        # Compute acceleration as a function of speed. This is a simple
-        # linear acceleration - if you move twice as fast, the mouse moves
-        # twice as far. Adjust as necessary for your specific needs.
-        acceleration = speed * 50
+        # Compute acceleration as a function of speed.
+        acceleration = speed * 5000
 
         # Apply acceleration to movement
         pixel_dx = int(dx * acceleration)
