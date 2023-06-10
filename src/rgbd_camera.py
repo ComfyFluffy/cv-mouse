@@ -13,7 +13,7 @@ class DeviceType(Enum):
 
 class Frame:
     rgb: np.ndarray
-    depth: np.ndarray
+    depth: np.ndarray 
     instrinsic_mat: np.ndarray
     device_type: DeviceType
 

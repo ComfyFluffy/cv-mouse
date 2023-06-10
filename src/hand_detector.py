@@ -25,25 +25,25 @@ class Hand:
         return landmark.x, landmark.y
 
     @property
-    def index_tip(self) -> tuple[float, float]:
+    def index_dip(self) -> tuple[float, float]:
         '''
         Get the coordinate of the index tip.
         '''
-        return self.get_coordinate(mp_hands.HandLandmark.INDEX_FINGER_TIP)
+        return self.get_coordinate(mp_hands.HandLandmark.INDEX_FINGER_DIP)
 
     @property
-    def middle_tip(self) -> tuple[float, float]:
+    def middle_dip(self) -> tuple[float, float]:
         '''
         Get the coordinate of the middle tip.
         '''
-        return self.get_coordinate(mp_hands.HandLandmark.MIDDLE_FINGER_TIP)
+        return self.get_coordinate(mp_hands.HandLandmark.MIDDLE_FINGER_DIP)
 
     @property
-    def thumb_tip(self) -> tuple[float, float]:
+    def thumb_dip(self) -> tuple[float, float]:
         '''
         Get the coordinate of the thumb tip.
         '''
-        return self.get_coordinate(mp_hands.HandLandmark.THUMB_TIP)
+        return self.get_coordinate(mp_hands.HandLandmark.THUMB_DIP)
 
 
 class HandDetector:
