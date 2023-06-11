@@ -33,6 +33,12 @@ class Frame:
                           self.camera_pose)
         return new_frame
 
+    def resize_to(self, width: int, height: int):
+        rgb = cv2.resize(self.rgb, (width, height))
+        depth = cv2.resize(self.depth, (width, height))
+        return Frame(rgb, depth, self.instrinsic_mat, self.device_type,
+                     self.camera_pose)
+
 
 class RgbdCamera:
 
@@ -43,17 +49,23 @@ class RgbdCamera:
         self.frame: Frame
         self.stopped = False
 
+    def get_intrinsic_mat(self):
+        coeffs = self.session.get_intrinsic_mat()
+        return np.array([[coeffs.fx, 0, coeffs.tx], [0, coeffs.fy, coeffs.ty],
+                         [0, 0, 1]])
+
     def _on_new_frame(self):
         depth = self.session.get_depth_frame()
         rgb = self.session.get_rgb_frame()
         device_type = DeviceType(self.session.get_device_type())
         camera_pose = self.session.get_camera_pose()
+        instrinsic_mat = self.get_intrinsic_mat()
 
         if device_type == DeviceType.TRUEDEPTH:
             depth = cv2.flip(depth, 1)
             rgb = cv2.flip(rgb, 1)
 
-        frame = Frame(rgb, depth, np.array([]), device_type, camera_pose)
+        frame = Frame(rgb, depth, instrinsic_mat, device_type, camera_pose)
 
         with self.lock:
             self.frame = frame

@@ -5,9 +5,12 @@ from numpy import typing as npt
 
 class Plane:
     ransac: RANSACRegressor
+    points: npt.NDArray[np.float32]
 
-    def __init__(self, ransac: RANSACRegressor):
+    def __init__(self, ransac: RANSACRegressor,
+                 points: npt.NDArray[np.float32]):
         self.ransac = ransac
+        self.points = points
 
     @staticmethod
     def fit(depth_map: npt.NDArray[np.float32]) -> 'Plane':
@@ -28,7 +31,7 @@ class Plane:
         ransac = RANSACRegressor()
         ransac.fit(points[:, :2], points[:, 2])
 
-        return Plane(ransac)
+        return Plane(ransac, points)
 
     @property
     def transform_matrix(self) -> np.ndarray:

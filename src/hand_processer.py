@@ -1,9 +1,12 @@
+from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import cpu_count
 from rgbd_camera import Frame
 from hand_detector import HandDetector, Hand
 import cv2
 import numpy as np
 from mouse import MouseController
 import math
+from geometry import Plane
 
 
 def avg_depth(x: float, y: float, depth: np.ndarray) -> np.floating | float:
@@ -24,17 +27,15 @@ class HandProcesser:
     click_margin = 0.003
     click_threshold = 0.02
     disable_threshold = 0.295
+    hand_detector: HandDetector
+
+    workers = max(cpu_count(), 4)
+    executor = ThreadPoolExecutor(max_workers=workers)
+
+    def __init__(self, hand_detector) -> None:
+        self.hand_detector = hand_detector
 
     def process_hand(self, hand: Hand, depth: np.ndarray):
-        # Get the distance of ring_dip to index_dip and ring_dip to thumb_ip.
-        # Select the one with larger distance to index_dip as the base,
-        # which avoids the overlap of base when the hand is at the edge of the screen.
-        # base = hand.ring_dip if distance(
-        #     hand.middle_dip, hand.index_dip) > distance(
-        #         hand.index_dip, hand.thumb_ip) else hand.thumb_ip
-        # print(distance(hand.middle_dip, hand.index_dip),
-        #       distance(hand.index_dip, hand.thumb_ip))
-
         x, y = hand.thumb_ip
         base_d = avg_depth(x, y, depth)
         if not np.isnan(base_d):
@@ -62,14 +63,19 @@ class HandProcesser:
 
     def process_frame(
         self,
-        hand_detector: HandDetector,
         frame: Frame,
     ):
         depth = frame.depth
         rgb = frame.rgb
         bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
 
-        hand = hand_detector.detect_bgr(bgr)
+        hand = self.hand_detector.detect_bgr(bgr)
+
+        plane = Plane.fit(depth)
+        # Get the median depth of the plane
+        inlier_depths = plane.points[plane.ransac.inlier_mask_, 2]
+        median_depth = np.median(inlier_depths)
+        print(median_depth)
 
         if hand:
             self.process_hand(hand, depth)

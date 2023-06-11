@@ -1,17 +1,16 @@
 import math
 import time
-from pyautogui import moveRel
-import pyautogui
+import pydirectinput as pyautogui
 
 pyautogui.FAILSAFE = False
 
+# def mouseDown(button='left'):
+#     print(f'Mouse down {button}')
+mouseDown = pyautogui.mouseDown
 
-def mouseDown(button='left'):
-    print(f'Mouse down {button}')
-
-
-def mouseUp(button='left'):
-    print(f'Mouse up {button}')
+# def mouseUp(button='left'):
+#     print(f'Mouse up {button}')
+mouseUp = pyautogui.mouseUp
 
 
 class MouseController:
@@ -55,7 +54,9 @@ class MouseController:
         # Compute the pixel movement
         mouse_x, mouse_y = self.compute_with_acceleration(dx, dy, dt)
 
-        moveRel(mouse_x, mouse_y, _pause=False)
+        now = time.time()
+        pyautogui.moveRel(mouse_x, mouse_y, _pause=False)
+        print(f'Move mouse: {mouse_x}, {mouse_y}, dt: {now - current_time}')
 
     def compute_with_acceleration(self, dx: float, dy: float,
                                   dt: float) -> tuple[int, int]:
