@@ -1,16 +1,17 @@
 import math
 import time
-import pydirectinput as pyautogui
+import pydirectinput
 
-pyautogui.FAILSAFE = False
+pydirectinput.FAILSAFE = False
+pydirectinput.PAUSE = 0
 
 # def mouseDown(button='left'):
 #     print(f'Mouse down {button}')
-mouseDown = pyautogui.mouseDown
+mouseDown = pydirectinput.mouseDown
 
 # def mouseUp(button='left'):
 #     print(f'Mouse up {button}')
-mouseUp = pyautogui.mouseUp
+mouseUp = pydirectinput.mouseUp
 
 
 class MouseController:
@@ -55,7 +56,11 @@ class MouseController:
         mouse_x, mouse_y = self.compute_with_acceleration(dx, dy, dt)
 
         now = time.time()
-        pyautogui.moveRel(mouse_x, mouse_y, _pause=False)
+        pydirectinput.move(
+            mouse_x,
+            mouse_y,
+            relative=True,
+        )
         if mouse_x != 0 or mouse_y != 0:
             print(
                 f'Move mouse: {mouse_x}, {mouse_y}, dt: {now - current_time}')
@@ -80,7 +85,7 @@ class MouseController:
             return 0, 0
 
         # Compute acceleration as a function of speed.
-        acceleration = speed * 12000
+        acceleration = speed * 10000
 
         # Apply acceleration to movement
         pixel_dx = int(dx * acceleration)
