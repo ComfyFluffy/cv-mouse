@@ -14,29 +14,29 @@ class DeviceType(Enum):
 class Frame:
     rgb: np.ndarray
     depth: np.ndarray
-    instrinsic_mat: np.ndarray
+    intrinsic_matrix: np.ndarray
     device_type: DeviceType
     camera_pose: Any
 
     def __init__(self, rgb: np.ndarray, depth: np.ndarray,
-                 intrinsic_mat: np.ndarray, device_type: DeviceType,
+                 intrinsic_matrix: np.ndarray, device_type: DeviceType,
                  camera_pose: Any):
         self.rgb = rgb
         self.depth = depth
-        self.instrinsic_mat = intrinsic_mat
+        self.intrinsic_matrix = intrinsic_matrix
         self.device_type = device_type
         self.camera_pose = camera_pose
 
     def clone(self):
         new_frame = Frame(self.rgb.copy(), self.depth.copy(),
-                          self.instrinsic_mat.copy(), self.device_type,
+                          self.intrinsic_matrix.copy(), self.device_type,
                           self.camera_pose)
         return new_frame
 
     def resize_to(self, width: int, height: int):
         rgb = cv2.resize(self.rgb, (width, height))
         depth = cv2.resize(self.depth, (width, height))
-        return Frame(rgb, depth, self.instrinsic_mat, self.device_type,
+        return Frame(rgb, depth, self.intrinsic_matrix, self.device_type,
                      self.camera_pose)
 
 
