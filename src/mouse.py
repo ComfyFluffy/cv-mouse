@@ -85,7 +85,7 @@ class MouseController:
             return 0, 0
 
         # Compute acceleration as a function of speed.
-        acceleration = speed * 10000
+        acceleration = speed * 8000
 
         # Apply acceleration to movement
         pixel_dx = int(dx * acceleration)
